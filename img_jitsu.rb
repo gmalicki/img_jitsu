@@ -121,7 +121,7 @@ protected
       } } }
       
       %w(small medium).each_with_index do |size, idx|
-        rpt[size] =  {
+        rpt['image'][size] =  {
           'file_name' => @children[idx][:file_name],
           'height' => @children[idx][:height],
           'width' => @children[idx][:width],
