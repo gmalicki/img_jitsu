@@ -56,7 +56,7 @@ protected
       medium = @file_name.split('.')[0] + '-medium.' + file_extension
       File.copy(TMP_DIR + @file_name, TMP_DIR + small)
       File.copy(TMP_DIR + @file_name, TMP_DIR + medium)
-      @children = [{:file_name => small, :size => 0}, {:file_name => small, :size => 0}]
+      @children = [{:file_name => small, :size => 0}, {:file_name => medium, :size => 0}]
       true
     end
   end
