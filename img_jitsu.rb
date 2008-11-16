@@ -62,7 +62,7 @@ protected
   end
   
   def sync_to_primary_storage
-    bucket = RightAws::S3.bucket(@@bucket)
+    bucket = @@s3_connection.bucket(@@bucket)
     # sync the original
     open(TMP_DIR + @file_name, "r") do |file|
       key = RightAws::S3::Key.create(bucket, @file_name)
