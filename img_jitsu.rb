@@ -5,7 +5,7 @@ require 'digest/md5'
 require 'right_aws'
 require 'yaml'
 require 'ftools'
-gem 'rmagick'
+require 'RMagick'
 
 
 class Media
@@ -62,11 +62,9 @@ protected
     #begin
   
       if @filename && img = Magick::Image::read(TMP_DIR + @file_name).first
-        # set the mime type for the original record
         @mime = img.format
-        file_extension = @url.split('.').last
-        small_fn = @file_name.split('.')[0] + '-small.' + file_extension
-        medium_fn = @file_name.split('.')[0] + '-medium.' + file_extension
+        small_fn = @file_name.split('.')[0] + '-small.' + '.jpg'
+        medium_fn = @file_name.split('.')[0] + '-medium.' + 'jpg'
         thumb_s = img.scale(SIZES[:small][:height], SIZES[:small][:width])
         thumb_m = img.scale(SIZES[:medium][:height],SIZES[:medium][:width])
         thumb_s.write TMP_DIR + small_fn
