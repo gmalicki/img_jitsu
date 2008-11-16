@@ -4,7 +4,7 @@ require 'img_jitsu'
 
 describe Media do  
   before do
-    @s3_config = YAML.load_file(Merb.root + '/config/amazon_s3.yml')[Merb.env].symbolize_keys!
+    @s3_config = YAML.load_file('./config/amazon_s3.yml')
     @sqs_connection = RightAws::Sqs.new(@s3_config['access_key_id'], @s3_config['secret_access_key'])
     @queue = RightAws::Sqs::Queue.create(@sqs_connection, @s3_config['in_queue'], true)
   end
