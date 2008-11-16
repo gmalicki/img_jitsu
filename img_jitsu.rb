@@ -73,7 +73,7 @@ protected
     @children.each do |child|
       open(TMP_DIR + child[:file_name], "r") do |file|
         key = RightAws::S3::Key.create(bucket, child[:file_name])
-        key.put f.read
+        key.put file.read
       end
       File.delete(TMP_DIR + child[:file_name])
     end
