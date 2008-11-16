@@ -89,7 +89,7 @@ protected
     true
   end 
   
-  def final_check
+  def final_check?
     # fetch the original, and children from their s3 buckets. Compare file sizes. 
     true
   end
