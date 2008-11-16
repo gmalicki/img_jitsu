@@ -13,7 +13,7 @@ class Media
   @@s3_config      = YAML.load_file('./config/amazon_s3.yml')
   @@s3_connection  = RightAws::S3.new(@@s3_config['access_key_id'], @@s3_config['secret_access_key'])
   @@sqs_connection = RightAws::Sqs.new(@@s3_config['access_key_id'], @@s3_config['secret_access_key'])
-  @@bucket = @@s3_config['bucket']
+  @@bucket = @@s3_connection.bucket(@@s3_config['bucket'])
   # @@in     = @@sqs_connection.queue(@@s3_config['in_queue'])
   TMP_DIR = './'
   SIZES = {
@@ -107,17 +107,16 @@ protected
   end
   
   def sync_to_primary_storage
-    bucket = @@s3_connection.bucket(@@bucket)
     # sync the original
     open(TMP_DIR + @file_name, "r") do |file|
-      key = RightAws::S3::Key.create(bucket, @file_name)
+      key = RightAws::S3::Key.create(@@bucket, @file_name)
       key.put file.read
     end
     File.delete(TMP_DIR + @file_name)
     # sync the children
     @children.each do |child|
       open(TMP_DIR + child[:file_name], "r") do |file|
-        key = RightAws::S3::Key.create(bucket, child[:file_name])
+        key = RightAws::S3::Key.create(@@bucket, child[:file_name])
         key.put file.read
       end
       File.delete(TMP_DIR + child[:file_name])
@@ -126,14 +125,13 @@ protected
   end 
   
   def final_check?
-    bucket = @@s3_connection.bucket(@@bucket)
-    key = RightAws::S3::Key.create(bucket, @file_name)
+    key = RightAws::S3::Key.create(@@bucket, @file_name)
     key.exists? 
   end
   
   def report
     if final_check?
-      rpt = {'image' => {'id' => @media_id, 'bucket' => @@bucket, 'original' => {
+      rpt = {'image' => {'id' => @media_id, 'bucket' => @@s3_config['bucket'], 'original' => {
         'file_name' => @file_name, 'height' => @height, 'width' => @width, 'mime-type' => @mime, 'size' => @size
       } } }
       
