@@ -98,7 +98,8 @@ protected
     if final_check?
       rpt = {'image' => {'id' => @media_id, 'bucket' => @@bucket, 'original' => {
         'file_name' => @file_name, 'height' => @height, 'width' => @width, 'mime-type' => @mime, 'size' => @size
-      } }
+      } } }
+      
       %w(small medium).each_with_index do |size, idx|
         rpt[size] =  {
           'file_name' => @children[idx][:file_name],
