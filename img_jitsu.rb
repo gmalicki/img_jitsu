@@ -59,7 +59,7 @@ protected
   end
   
   def resize
-    begin
+    #begin
       if @filename && img = Image.new(TMP_DIR + @file_name)
         puts "created image"
         # set the mime type for the original record
@@ -82,9 +82,9 @@ protected
                         :height => thumb_m.rows, 
                         :width => thumb_m.columns } ]
       end
-    rescue
-      return false
-    end
+    #rescue
+    #  return false
+    #end
     true
   end
   
