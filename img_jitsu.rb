@@ -70,12 +70,12 @@ protected
         thumb_s.write TMP_DIR + small_fn
         thumb_m.write TMP_DIR + medium_fn
         @children = [ { :file_name => small_fn, 
-                        :size => thumb_s.size, 
+                        :size => 31337, 
                         :mime => thumb_s.format, 
                         :height => thumb_s.rows, 
                         :width => thumb_s.columns }, 
                       { :file_name => medium_fn, 
-                        :size => thumb_m.size, 
+                        :size => 31337, 
                         :mime => thumb_m.format, 
                         :height => thumb_m.rows, 
                         :width => thumb_m.columns } ]
