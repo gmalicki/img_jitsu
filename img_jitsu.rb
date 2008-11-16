@@ -42,11 +42,11 @@ class Media
     @size = 0
   end
   
-protected 
   def process
     download && resize && sync_to_primary_storage && report
   end
   
+protected 
   def download
     begin
       file_extension = @url.split('.').last
