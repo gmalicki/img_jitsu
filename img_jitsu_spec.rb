@@ -8,5 +8,6 @@ describe Media do
     @m.send(:download).should == true
     @m.send(:resize).should == true
     @m.send(:sync_to_primary_storage).should == true
+    puts @m.report
   end
 end

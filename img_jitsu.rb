@@ -15,6 +15,10 @@ class Media
   @@bucket = @@s3_config['bucket']
   # @@in     = @@sqs_connection.queue(@@s3_config['in_queue'])
   TMP_DIR = './'
+  SIZES = {
+    :small => {:width => 10, :height => 10},
+    :medium => {:width => 50, :height => 50}
+  }
   attr_accessor :url
   
   def self.process_media 
@@ -31,6 +35,10 @@ class Media
     @url      = url
     @media_id = media_id
     @children = []
+    @height = 0
+    @width = 0
+    @mime = ''
+    @size = 0
   end
   
 protected 
@@ -56,7 +64,8 @@ protected
       medium = @file_name.split('.')[0] + '-medium.' + file_extension
       File.copy(TMP_DIR + @file_name, TMP_DIR + small)
       File.copy(TMP_DIR + @file_name, TMP_DIR + medium)
-      @children = [{:file_name => small, :size => 0}, {:file_name => medium, :size => 0}]
+      @children = [ {:file_name => small, :size => 0, :mime => 'image/jpeg', :height => 20, :width => 20}, 
+        {:file_name => medium, :size => 0, :mime => 'image/jpeg', :height => 20, :width => 20} ]
       true
     end
   end
@@ -87,9 +96,20 @@ protected
   
   def report
     if final_check?
-      rpt = {}
-      @out    = @@sqs_connection.queue(@@s3_config['out_queue'])
-      @out.send_messsage(rpt.to_yml)
+      rpt = {'image' => {'id' => @media_id, 'bucket' => @@bucket, 'original' => {
+        'file_name' => @file_name, 'height' => @height, 'width' => @width, 'mime-type' => @mime, 'size' => @size
+      } }
+      %w(small medium).each_with_index do |size, idx|
+        rpt[size] =  {
+          'file_name' => @children[idx][:file_name],
+          'height' => @children[idx][:height],
+          'width' => @children[idx][:width],
+          'size' => @children[idx][:size],
+          'mime' => @children[idx][:mime]
+        }
+      #@out    = @@sqs_connection.queue(@@s3_config['out_queue'])
+      #@out.send_messsage(rpt.to_yml)
+      rpt.to_yaml
     end
   end
 end
