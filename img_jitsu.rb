@@ -26,7 +26,7 @@ class Media
     in_queue  = @@sqs_connection.queue(@@s3_config['in_queue'])
     while in_queue.size > 0
       if i = YAML.load(in_queue.pop.to_s)
-        m = Media.new(i[:image][:url], i[:image][:id])
+        m = Media.new(i['image']['url'], i['image']['id'])
         m.process
       end
     end
@@ -40,8 +40,6 @@ class Media
     @width = 0
     @mime = ''
     @size = 0
-    
-    puts "created media with media_id #{@media_id}"
   end
   
   def process
