@@ -117,8 +117,9 @@ protected
   end 
   
   def final_check?
-    # fetch the original, and children from their s3 buckets. Compare file sizes. 
-    true
+    bucket = @@s3_connection.bucket(@@bucket)
+    key = RightAws::S3::Key.create(bucket, @file_name)
+    key.exists? 
   end
   
   def report
