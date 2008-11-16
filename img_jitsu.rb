@@ -61,7 +61,7 @@ protected
   def resize
     #begin
   
-      if @filename && img = Magick::Image::read(TMP_DIR + @file_name).first
+      if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
         @mime = img.format
         small_fn = @file_name.split('.')[0] + '-small.' + '.jpg'
         medium_fn = @file_name.split('.')[0] + '-medium.' + 'jpg'
