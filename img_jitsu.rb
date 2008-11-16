@@ -66,7 +66,7 @@ protected
     # sync the original
     open(TMP_DIR + @file_name, "r") do |file|
       key = RightAws::S3::Key.create(bucket, @file_name)
-      key.put f.read
+      key.put file.read
     end
     File.delete(TMP_DIR + @file_name)
     # sync the children
