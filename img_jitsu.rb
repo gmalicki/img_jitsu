@@ -5,7 +5,6 @@ require 'digest/md5'
 require 'right_aws'
 require 'yaml'
 require 'ftools'
-require 'daemonize'
 require 'RMagick'
 
 
@@ -138,16 +137,4 @@ protected
 end
 
 
-class Processor
-  include Daemonize
-  
-  def initialize
-    daemonize
-    loop do
-      Media.process_media
-      sleep 30
-    end
-  end
-end
-
-Processor.new
+Media.process_media
