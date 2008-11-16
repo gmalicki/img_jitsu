@@ -7,6 +7,7 @@ require 'yaml'
 require 'ftools'
 gem 'rmagick'
 
+
 class Media
   # @@@@@@@@;)  marge simpson.
   @@s3_config      = YAML.load_file('./config/amazon_s3.yml')
@@ -58,16 +59,32 @@ protected
   end
   
   def resize
-    if @file_name
-      file_extension = @url.split('.').last
-      small = @file_name.split('.')[0] + '-small.' + file_extension
-      medium = @file_name.split('.')[0] + '-medium.' + file_extension
-      File.copy(TMP_DIR + @file_name, TMP_DIR + small)
-      File.copy(TMP_DIR + @file_name, TMP_DIR + medium)
-      @children = [ {:file_name => small, :size => 0, :mime => 'image/jpeg', :height => 20, :width => 20}, 
-        {:file_name => medium, :size => 0, :mime => 'image/jpeg', :height => 20, :width => 20} ]
-      true
+    begin
+      if @filename && img = Image.new(@file_name)
+        # set the mime type for the original record
+        @mime = img.format
+        file_extension = @url.split('.').last
+        small_fn = @file_name.split('.')[0] + '-small.' + file_extension
+        medium_fn = @file_name.split('.')[0] + '-medium.' + file_extension
+        thumb_s = img.scale(SIZES[:small][:height], SIZES[:small][:width])
+        thumb_m = img.scale(SIZES[:medium][:height],SIZES[:medium][:width])
+        thumb_s.write TMP_DIR + small_fn
+        thumb_m.write TMP_DIR + medium_fn
+        @children = [ { :file_name => small_fn, 
+                        :size => thumb_s.size, 
+                        :mime => thumb_s.format, 
+                        :height => thumb_s.rows, 
+                        :width => thumb_s.columns }, 
+                      { :file_name => medium_fn, 
+                        :size => thumb_m.size, 
+                        :mime => thumb_m.format, 
+                        :height => thumb_m.rows, 
+                        :width => thumb_m.columns } ]
+      end
+    rescue
+      return false
     end
+    true
   end
   
   def sync_to_primary_storage
@@ -109,9 +126,9 @@ protected
           'mime' => @children[idx][:mime]
         }
       end
-      #@out    = @@sqs_connection.queue(@@s3_config['out_queue'])
-      #@out.send_messsage(rpt.to_yml)
-      rpt.to_yaml
+      @out    = @@sqs_connection.queue(@@s3_config['out_queue'])
+      @out.send_messsage(rpt.to_yml)
+      true
     end
   end
 end
