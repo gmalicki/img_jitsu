@@ -40,6 +40,8 @@ class Media
     @width = 0
     @mime = ''
     @size = 0
+    
+    puts "created media with media_id #{@media_id}"
   end
   
   def process
