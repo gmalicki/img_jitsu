@@ -17,7 +17,7 @@ class Media
   # @@in     = @@sqs_connection.queue(@@s3_config['in_queue'])
   TMP_DIR = './'
   SIZES = {
-    :small => '160x160>',
+    :small => '140x140>',
     :medium => '320x320>'
   }
   attr_accessor :url
