@@ -130,7 +130,7 @@ protected
         }
       end
       @out    = @@sqs_connection.queue(@@s3_config['out_queue'])
-      @out.send_messsage(rpt.to_yml)
+      @out.send_messsage(rpt.to_yaml)
       true
     end
   end
