@@ -27,7 +27,7 @@ class Media
     while in_queue.size > 0
       if i = YAML.load(in_queue.pop.to_s)
         raise i.inspect
-        m = Media.new(i['url'], i['id'])
+        m = Media.new(i['image']['url'], i['image']['id'])
         m.process
       end
     end
