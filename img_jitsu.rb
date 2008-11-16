@@ -61,7 +61,7 @@ protected
   def resize
     #begin
   
-      if @filename && img = Image.new(TMP_DIR + @file_name)
+      if @filename && img = Magick::Image::read(TMP_DIR + @file_name).first
         # set the mime type for the original record
         @mime = img.format
         file_extension = @url.split('.').last
