@@ -60,6 +60,7 @@ protected
   
   def resize
     #begin
+    puts "got to resize"
       if @filename && img = Image.new(TMP_DIR + @file_name)
         puts "created image"
         # set the mime type for the original record
