@@ -60,9 +60,8 @@ protected
   
   def resize
     #begin
-    puts "got to resize"
+  
       if @filename && img = Image.new(TMP_DIR + @file_name)
-        puts "created image"
         # set the mime type for the original record
         @mime = img.format
         file_extension = @url.split('.').last
@@ -82,11 +81,12 @@ protected
                         :mime => thumb_m.format, 
                         :height => thumb_m.rows, 
                         :width => thumb_m.columns } ]
+        return true
       end
     #rescue
     #  return false
     #end
-    true
+    return false
   end
   
   def sync_to_primary_storage
