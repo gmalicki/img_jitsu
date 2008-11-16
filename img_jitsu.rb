@@ -1,9 +1,11 @@
+require 'rubygems'
 require 'uri'
 require 'open-uri'
 require 'digest/md5'
 require 'right_aws'
 require 'yaml'
 require 'ftools'
+gem 'rmagick'
 
 class Media
   # @@@@@@@@;)  marge simpson.
