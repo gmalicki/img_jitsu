@@ -5,6 +5,7 @@ require 'digest/md5'
 require 'right_aws'
 require 'yaml'
 require 'ftools'
+require 'daemonize'
 require 'RMagick'
 
 
@@ -136,4 +137,12 @@ protected
   end
 end
 
-Media.process_media
+
+include Daemonize
+
+daemonize()
+loop do
+  Media.process_media
+  sleep 30
+end
+
