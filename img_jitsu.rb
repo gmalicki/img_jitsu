@@ -135,3 +135,5 @@ protected
     end
   end
 end
+
+Media.process_media
