@@ -1,0 +1,5 @@
+bucket: newstrex-images
+in_queue: newstrex-pending
+out_queue: newstrex-finished
+access_key_id: 1GZFKYFWGM2WEAZFZ202
+secret_access_key: gcD9Y9FYrJ8XvJptCNVnjG+jdgT+ozLnaV+WHfoC
