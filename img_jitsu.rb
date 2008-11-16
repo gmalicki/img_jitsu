@@ -65,8 +65,10 @@ protected
     #begin
   
       if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
-        tmp = @file_name.split(".")[0]
-        @file_name = tmp + ".#{img.format}"
+        old_fn = @file_name
+        tmp_fn = @file_name.split(".")[0]
+        @file_name = tmp_fn + ".#{img.format}"
+        File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
         @mime = img.format
         @height = img.rows
         @width = img.columns
