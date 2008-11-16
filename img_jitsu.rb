@@ -55,7 +55,7 @@ protected
       end
       @file_name = Digest::MD5.hexdigest(@url + Time.now.to_s) + ".#{file_extension}"
       open(@url) { |img| File.open(TMP_DIR + @file_name, "wb") { |f| f.puts img.read } }
-    rescue Timeout::Error
+    rescue Timeout::Error, OpenURI::HTTPError
       return false
     end
     true
@@ -67,7 +67,7 @@ protected
       if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
         old_fn = @file_name
         tmp_fn = @file_name.split(".")[0]
-        @file_name = tmp_fn + ".#{img.format}"
+        @file_name = tmp_fn + ".#{img.format.gsub('JPEG', 'JPG')}"
         File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
         @mime = img.format
         @height = img.rows
