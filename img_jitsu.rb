@@ -62,16 +62,17 @@ protected
   end
   
   def sync_to_primary_storage
+    bucket = RightAws::S3.bucket(@@bucket)
     # sync the original
     open(TMP_DIR + @file_name, "r") do |file|
-      key = RightAws::S3::Key.create(@@bucket, @file_name)
+      key = RightAws::S3::Key.create(bucket, @file_name)
       key.put f.read
     end
     File.delete(TMP_DIR + @file_name)
     # sync the children
     @children.each do |child|
       open(TMP_DIR + child[:file_name], "r") do |file|
-        key = RightAws::S3::Key.create(@@bucket, child[:file_name])
+        key = RightAws::S3::Key.create(bucket, child[:file_name])
         key.put f.read
       end
       File.delete(TMP_DIR + child[:file_name])
