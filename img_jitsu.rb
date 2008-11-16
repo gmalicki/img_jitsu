@@ -108,6 +108,7 @@ protected
           'size' => @children[idx][:size],
           'mime' => @children[idx][:mime]
         }
+      end
       #@out    = @@sqs_connection.queue(@@s3_config['out_queue'])
       #@out.send_messsage(rpt.to_yml)
       rpt.to_yaml
