@@ -17,8 +17,8 @@ class Media
   # @@in     = @@sqs_connection.queue(@@s3_config['in_queue'])
   TMP_DIR = './'
   SIZES = {
-    :small => {:width => 150, :height => 150},
-    :medium => {:width => 300, :height => 300}
+    :small => '160x160>',
+    :medium => '320x320>'
   }
   attr_accessor :url
   
@@ -71,13 +71,22 @@ protected
         File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
         @mime = img.format
         @height = img.rows
+        return false if img.rows < 80
+        return false if img.columns < 80
         @width = img.columns
         @size = 31337
         small_fn = @file_name.split('.')[0] + '-small.' + 'jpg'
         medium_fn = @file_name.split('.')[0] + '-medium.' + 'jpg'
-        thumb_s = img.scale(SIZES[:small][:height], SIZES[:small][:width])
-        thumb_m = img.scale(SIZES[:medium][:height],SIZES[:medium][:width])
+        # thumb_s = img.scale(SIZES[:small][:height], SIZES[:small][:width])
+        #         thumb_m = img.scale(SIZES[:medium][:height],SIZES[:medium][:width])
+        
+        thumb_s = img.change_geometry!(SIZES[:small]) { |cols, rows, i|
+          i.resize!(cols, rows)
+        }
         thumb_s.write TMP_DIR + small_fn
+        thumb_m = img.change_geometry!(SIZES[:medium]) { |cols, rows, i|
+          i.resize!(cols, rows)
+        }
         thumb_m.write TMP_DIR + medium_fn
         @children = [ { :file_name => small_fn, 
                         :size => 31337, 
