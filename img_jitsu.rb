@@ -138,11 +138,16 @@ protected
 end
 
 
-include Daemonize
-
-daemonize()
-loop do
-  Media.process_media
-  sleep 30
+class Processor
+  include Daemonize
+  
+  def initialize
+    daemonize
+    loop do
+      Media.process_media
+      sleep 30
+    end
+  end
 end
 
+Processor.new
