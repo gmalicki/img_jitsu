@@ -52,7 +52,7 @@ protected
       file_extension = @url.split('.').last
       @file_name = Digest::MD5.hexdigest(@url + Time.now.to_s) + ".#{file_extension}"
       open(@url) { |img| File.open(TMP_DIR + @file_name, "wb") { |f| f.puts img.read } }
-    rescue
+    rescue Timeout::Error
       return false
     end
     true
