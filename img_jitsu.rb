@@ -40,6 +40,7 @@ class Media
     @width = 0
     @mime = ''
     @size = 0
+    @md5 = Digest::MD5.hexdigest(@url)
   end
   
   def process
@@ -62,48 +63,60 @@ protected
   end
   
   def resize
-    #begin
+    resize_small
+    resize_medium
+  end
   
-      if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
-        old_fn = @file_name
-        tmp_fn = @file_name.split(".")[0]
-        @file_name = tmp_fn + ".#{img.format.gsub('JPEG', 'JPG')}"
-        File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
-        @mime = img.format
-        @height = img.rows
-        return false if img.rows < 80
-        return false if img.columns < 80
-        @width = img.columns
-        @size = 31337
-        small_fn = @file_name.split('.')[0] + '-small.' + 'jpg'
-        medium_fn = @file_name.split('.')[0] + '-medium.' + 'jpg'
-        # thumb_s = img.scale(SIZES[:small][:height], SIZES[:small][:width])
-        #         thumb_m = img.scale(SIZES[:medium][:height],SIZES[:medium][:width])
-        
-        thumb_s = img.change_geometry!(SIZES[:small]) { |cols, rows, i|
-          i.resize!(cols, rows)
-        }
-        thumb_s.write TMP_DIR + small_fn
-        thumb_m = img.change_geometry!(SIZES[:medium]) { |cols, rows, i|
-          i.resize!(cols, rows)
-        }
-        thumb_m.write TMP_DIR + medium_fn
-        @children = [ { :file_name => small_fn, 
-                        :size => 31337, 
-                        :mime => thumb_s.format, 
-                        :height => thumb_s.rows, 
-                        :width => thumb_s.columns }, 
-                      { :file_name => medium_fn, 
-                        :size => 31337, 
-                        :mime => thumb_m.format, 
-                        :height => thumb_m.rows, 
-                        :width => thumb_m.columns } ]
-        return true
-      end
-    #rescue
-    #  return false
-    #end
-    return false
+  def resize_small
+    if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
+      old_fn = @file_name
+      tmp_fn = @file_name.split(".")[0]
+      @file_name = tmp_fn + ".#{img.format.gsub('JPEG', 'JPG')}"
+      File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
+      @mime = img.format
+      @height = img.rows
+      return false if img.rows < 80
+      return false if img.columns < 80
+      @width = img.columns
+      @size = 31337
+      small_fn = @file_name.split('.')[0] + '-small.' + 'jpg'
+      thumb_s = img.change_geometry!(SIZES[:small]) { |cols, rows, i|
+        i.resize!(cols, rows)
+      }
+      thumb_s.write TMP_DIR + small_fn
+      @children ||= []
+      @children  << { :file_name => small_fn, 
+                      :size => 31337, 
+                      :mime => thumb_s.format, 
+                      :height => thumb_s.rows, 
+                      :width => thumb_s.columns } 
+      return true
+  end
+  
+  def resize_medium
+    if @file_name && img = Magick::Image::read(TMP_DIR + @file_name).first
+      old_fn = @file_name
+      tmp_fn = @file_name.split(".")[0]
+      @file_name = tmp_fn + ".#{img.format.gsub('JPEG', 'JPG')}"
+      File.mv(TMP_DIR + old_fn, TMP_DIR+ @file_name)
+      @mime = img.format
+      @height = img.rows
+      return false if img.rows < 80
+      return false if img.columns < 80
+      @width = img.columns
+      @size = 31337
+      medium_fn = @file_name.split('.')[0] + '-medium.' + 'jpg'
+      thumb_m = img.change_geometry!(SIZES[:medium]) { |cols, rows, i|
+        i.resize!(cols, rows)
+      }
+      thumb_m.write TMP_DIR + medium_fn
+      @children ||= []
+      @children << { :file_name => medium_fn, 
+                      :size => 31337, 
+                      :mime => thumb_m.format, 
+                      :height => thumb_m.rows, 
+                      :width => thumb_m.columns }
+      return true
   end
   
   def sync_to_primary_storage
@@ -131,7 +144,7 @@ protected
   
   def report
     if final_check?
-      rpt = {'image' => {'id' => @media_id, 'bucket' => @@s3_config['bucket'], 'original' => {
+      rpt = {'image' => {'id' => @media_id, 'bucket' => @@s3_config['bucket'], 'md5' => @md5, 'original' => {
         'file_name' => @file_name, 'height' => @height, 'width' => @width, 'mime-type' => @mime, 'size' => @size
       } } }
       
