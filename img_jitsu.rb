@@ -91,6 +91,7 @@ protected
                       :height => thumb_s.rows, 
                       :width => thumb_s.columns } 
       return true
+    end
   end
   
   def resize_medium
@@ -117,6 +118,7 @@ protected
                       :height => thumb_m.rows, 
                       :width => thumb_m.columns }
       return true
+    end
   end
   
   def sync_to_primary_storage
